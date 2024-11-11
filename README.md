@@ -114,7 +114,6 @@ class FacialExpressionModel(object):
 ### Output:
 <img width="515" alt="122278339-3b7e1380-cf00-11eb-94c2-94914135f696" src="https://github.com/user-attachments/assets/d87ee03c-9945-41d8-a867-0f9eb83a3958">
 <img width="696" alt="122278507-66686780-cf00-11eb-9836-f866356bcac9" src="https://github.com/user-attachments/assets/9328d70c-526c-40e9-902a-ecf0cc2b337f">
-![122278742-aaf40300-cf00-11eb-8204-ced32ccb0acc](https://github.com/user-attachments/assets/85ceed13-2899-4713-a5c0-509e6d3c088c)
 
 
 
