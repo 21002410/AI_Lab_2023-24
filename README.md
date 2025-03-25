@@ -1,8 +1,8 @@
-# Ex.No: 13 Learning – Facial Emotion Recognition  
-### DATE:                                                                          
+# Ex.No: 13 Learning – Use Supervised Learning  
+### DATE: 22/2/25                                                                           
 ### REGISTER NUMBER : 212221040027
 ### AIM: 
-To write a program to recognizing facial expression of human is of significance in certain domains.
+To write a program to train the classifier for Diabetes Prediction.
 ###  Algorithm:
 1. Start the program.
 2. Import required Python libraries, including NumPy, Pandas, Google Colab, Gradio, and various
@@ -23,101 +23,95 @@ predictions based on user inputs.
 get predictions regarding diabetes risk.
 12. Stop the program.
 ### Program:
-import cv2
-from model import FacialExpressionModel
+```
+from google.colab import drive
+drive.mount('/content/gdrive')
+```
+```
+#import packages
 import numpy as np
+import pandas as pd
+```
+```
+pip install gradio
+```
+```
+pip install typing-extensions --upgrade
+```
+```
+!python --version
+```
+```
+ pip install --upgrade typing
+```
+```
+import gradio as gr
+import pandas as pd
+```
+```
+cd /content/gdrive/MyDrive/demo/gradio_project-main
+```
+```
+#get the data
+data = pd.read_csv('diabetes.csv')
+data.head()
+```
+```
+print(data.columns)
+```
+```
+x = data.drop(['Outcome'], axis=1)
+y = data['Outcome']
+print(x[:5])
+```
+```
+#split data
+from sklearn.model_selection import train_test_split
 
-facec = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-model = FacialExpressionModel("model.json", "model_weights.h5")
-font = cv2.FONT_HERSHEY_SIMPLEX
-
-class VideoCamera(object):
-    def __init__(self):
-        self.video = cv2.VideoCapture("C:\\Users\\Faizan\\Downloads\\Emotion Detector\\presidential_debate.mp4")
-
-    def __del__(self):
-        self.video.release()
-
-    # returns camera frames along with bounding boxes and predictions
-    def get_frame(self):
-        _, fr = self.video.read()
-        gray_fr = cv2.cvtColor(fr, cv2.COLOR_BGR2GRAY)
-        faces = facec.detectMultiScale(gray_fr, 1.3, 5)
-
-        for (x, y, w, h) in faces:
-            fc = gray_fr[y:y+h, x:x+w]
-
-            roi = cv2.resize(fc, (48, 48))
-            pred = model.predict_emotion(roi[np.newaxis, :, :, np.newaxis])
-
-            cv2.putText(fr, pred, (x, y), font, 1, (255, 255, 0), 2)
-            cv2.rectangle(fr,(x,y),(x+w,y+h),(255,0,0),2)
-
-        _, jpeg = cv2.imencode('.jpg', fr)
-        return jpeg.tobytes()
-#main.py
-from flask import Flask, render_template, Response
-from camera import VideoCamera
-
-
-app = Flask(__name__)
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-def gen(camera):
-    while True:
-        frame = camera.get_frame()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-
-@app.route('/video_feed')
-def video_feed():
-    return Response(gen(VideoCamera()),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
-#model.py
-from tensorflow.keras.models import model_from_json
-import numpy as np
-
-import tensorflow as tf
-
-config = tf.compat.v1.ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.15
-session = tf.compat.v1.Session(config=config)
-
-
-class FacialExpressionModel(object):
-
-    EMOTIONS_LIST = ["Angry", "Disgust",
-                     "Fear", "Happy",
-                     "Neutral", "Sad",
-                     "Surprise"]
-
-    def __init__(self, model_json_file, model_weights_file):
-        # load model from JSON file
-        with open(model_json_file, "r") as json_file:
-            loaded_model_json = json_file.read()
-            self.loaded_model = model_from_json(loaded_model_json)
-
-        # load weights into the new model
-        self.loaded_model.load_weights(model_weights_file)
-        self.loaded_model._make_predict_function()
-
-    def predict_emotion(self, img):
-        self.preds = self.loaded_model.predict(img)
-        return FacialExpressionModel.EMOTIONS_LIST[np.argmax(self.preds)]
+x_train, x_test, y_train, y_test= train_test_split(x,y)
+```
+```
+#scale data
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+x_train_scaled = scaler.fit_transform(x_train)
+x_test_scaled = scaler.fit_transform(x_test)
+```
+```
+#instatiate model
+from sklearn.neural_network import MLPClassifier
+model = MLPClassifier(max_iter=1000, alpha=1)
+model.fit(x_train, y_train)
+print("Model Accuracy on training set:", model.score(x_train, y_train))
+print("Model Accuracy on Test Set:", model.score(x_test, y_test))
+```
+```
+print(data.columns)
+```
+```
+#create a function for gradio
+def diabetes(Pregnancies, Glucose, Blood_Pressure, SkinThickness, Insulin, BMI,Diabetes_Pedigree, Age):
+    x = np.array([Pregnancies,Glucose,Blood_Pressure,SkinThickness,Insulin,BMI,Diabetes_Pedigree,Age])
+    prediction = model.predict(x.reshape(1, -1))
+    if(prediction==0):
+      return "NO"
+    else:
+      return "YES"
+```
+```
+outputs = gr.Textbox()
+app = gr.Interface(fn=diabetes, inputs=['number','number','number','number','number','number','number','number'], outputs=outputs,description="Detection of Diabeties")
+app.launch(share=True)
+```
 
 ### Output:
-<img width="515" alt="122278339-3b7e1380-cf00-11eb-94c2-94914135f696" src="https://github.com/user-attachments/assets/d87ee03c-9945-41d8-a867-0f9eb83a3958">
-<img width="696" alt="122278507-66686780-cf00-11eb-9836-f866356bcac9" src="https://github.com/user-attachments/assets/9328d70c-526c-40e9-902a-ecf0cc2b337f">
-
+![image](https://github.com/NithishThirumalai/AI_Lab_2023-24/assets/114301782/f65f8935-6a7a-4259-80d1-9ad3f507c81a)
+![image](https://github.com/NithishThirumalai/AI_Lab_2023-24/assets/114301782/f06f890e-a127-43ed-84d0-c0630ea114bb)
+![image](https://github.com/NithishThirumalai/AI_Lab_2023-24/assets/114301782/afa24ae2-4f97-4a7a-b291-0c63aa878612)
+![280472576-361414a1-d8fa-4fe0-a7b7-6cfc96201742](https://github.com/NithishThirumalai/AI_Lab_2023-24/assets/114301782/d907f1f6-49ff-41c9-95c1-09d90122ee41)
 
 
 
 
 ### Result:
-Thus the recognizing facial expression of human is of significance executed successfully.
+Thus the system was trained successfully and the prediction was carried out.
