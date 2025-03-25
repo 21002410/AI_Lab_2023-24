@@ -1,4 +1,5 @@
-# Ex.No: 08  Planning –  Block World Problem 
+# Ex.No: 11  Planning –  Block World Problem 
+### DATE: 20/02/25                                                                           
 ### REGISTER NUMBER : 212221040027
 ### AIM: 
 To find the sequence of plan for Block word problem using PDDL  
@@ -19,43 +20,55 @@ Step 10 : Obtain the plan for given problem.<br>
 (define (domain blocksworld)
 (:requirements :strips :equality)
 (:predicates (clear ?x)
-(on-table ?x)
-(arm-empty)
-(holding ?x)
-(on ?x ?y))
+             (on-table ?x)
+             (arm-empty)
+             (holding ?x)
+             (on ?x ?y))
 (:action pickup
-:parameters (?ob)
-:precondition (and (clear ?ob) (on-table ?ob) (arm-empty))
-:effect (and (holding ?ob) (not (clear ?ob)) (not (on-table ?ob))
-(not (arm-empty))))
+  :parameters (?ob)
+  :precondition (and (clear ?ob) (on-table ?ob) (arm-empty))
+  :effect (and (holding ?ob) (not (clear ?ob)) (not (on-table ?ob)) 
+               (not (arm-empty))))
 (:action putdown
-:parameters (?ob)
-:precondition (and (holding ?ob))
-:effect (and (clear ?ob) (arm-empty) (on-table ?ob)
-(not (holding ?ob))))
+  :parameters  (?ob)
+  :precondition (and (holding ?ob))
+  :effect (and (clear ?ob) (arm-empty) (on-table ?ob) 
+               (not (holding ?ob))))
 (:action stack
-:parameters (?ob ?underob)
-:precondition (and (clear ?underob) (holding ?ob))
-:effect (and (arm-empty) (clear ?ob) (on ?ob ?underob)
-(not (clear ?underob)) (not (holding ?ob))))
+  :parameters  (?ob ?underob)
+  :precondition (and  (clear ?underob) (holding ?ob))
+  :effect (and (arm-empty) (clear ?ob) (on ?ob ?underob)
+               (not (clear ?underob)) (not (holding ?ob))))
 (:action unstack
-:parameters (?ob ?underob)
-:precondition (and (on ?ob ?underob) (clear ?ob) (arm-empty))
-:effect (and (holding ?ob) (clear ?underob)
-(not (on ?ob ?underob)) (not (clear ?ob)) (not (arm-empty))))
+  :parameters (?ob ?underob)
+  :precondition (and (on ?ob ?underob) (clear ?ob) (arm-empty))
+  :effect (and (holding ?ob) (clear ?underob)
+               (not (on ?ob ?underob)) (not (clear ?ob)) (not (arm-empty)))))
 ```
-### Input 
+
+
+
+
+
+
+
+
+
+### Input :
 ```
 (define (problem pb1)
-(:domain blocksworld)
-(:objects a b)
-(:init (on-table a) (on-table b) (clear a) (clear b) (arm-empty))
-(:goal (and (on a b))))
+   (:domain blocksworld)
+   (:objects a b)
+   (:init (on-table a) (on-table b)  (clear a)  (clear b) (arm-empty))
+   (:goal (and (on a b))))
 ```
 
 ### Output/Plan:
+![Screenshot 2024-04-29 091037](https://github.com/Vikhram-S/AI_Lab_2023-24/assets/146576573/d4f22e91-acf9-4a1d-bd18-6a42f29cfeb0)
+![Screenshot 2024-04-29 091057](https://github.com/Vikhram-S/AI_Lab_2023-24/assets/146576573/4e1e15ca-0d75-4e77-8ba1-2be2364352cd)
 
-![image](https://github.com/santhoshkumar24263/AI_Lab_2023-24/assets/127171952/bb413dbd-9c7d-43ec-b5dc-144e2a03abf3)
+
+
 
 
 ### Result:
